@@ -48,4 +48,4 @@ def _read_ground_truth_data():
     return json.dumps({'message': 'the ground truth table was created'}, sort_keys=False, indent=4), 200
 
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=7270)
