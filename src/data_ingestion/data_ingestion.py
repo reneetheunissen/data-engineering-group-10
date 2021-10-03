@@ -1,5 +1,7 @@
 ##################################
 # Data Ingestion
+# This code belongs to Umberto Griffo and is containerized by Group 10.
+# Original code: https://github.com/umbertogriffo/Predictive-Maintenance-using-LSTM
 ##################################
 import json
 
@@ -7,17 +9,9 @@ import pandas as pd
 from flask import Flask
 from resources.db_util import DBUtil
 
-
 app = Flask(__name__)
 app.config["DEBUG"] = True
 db_util = DBUtil()
-
-
-# To be called by the Docker file!
-def read_all_data() -> None:
-    _read_training_data()
-    _read_test_data()
-    _read_ground_truth_data()
 
 
 @app.route('/data/train', methods=['POST'])

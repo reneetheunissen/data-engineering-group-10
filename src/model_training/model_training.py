@@ -1,3 +1,9 @@
+##################################
+# Model training
+# This code belongs to Umberto Griffo and is containerized by Group 10.
+# Original code: https://github.com/umbertogriffo/Predictive-Maintenance-using-LSTM
+##################################
+
 import os
 
 import keras
