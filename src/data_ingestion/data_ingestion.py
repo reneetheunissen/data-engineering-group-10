@@ -15,7 +15,7 @@ app.config["DEBUG"] = True
 db_util = DBUtil()
 
 
-@app.route('/data/train', methods=['POST', 'PUT'])
+@app.route('/data/train', methods=['POST'])
 def _read_training_data():
     # read training data - It is the aircraft engine run-to-failure data.
     train_df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
@@ -58,9 +58,9 @@ def read_data(table_name):
     print(df)
 
 
-# app.run(host='0.0.0.0', port=7270)
+app.run(host='0.0.0.0', port=7270)
 
 
-if __name__ == '__main__':
-    _read_training_data()
-    read_data('train')
+# if __name__ == '__main__':
+#     _read_training_data()
+#     read_data('train')

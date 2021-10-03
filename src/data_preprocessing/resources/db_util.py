@@ -30,8 +30,7 @@ class DBUtil:
         # Define the columns of the table. Assume that a list of column names are provided and column type is float.
         columns = (Column(name, Float, quote=False) for name in column_names)
         # Create the table. Id is the primary key and it will be automatically generated.
-        v_table = Table(table_name, self.Base.metadata, Column('id', Integer, primary_key=True, autoincrement=True),
-                        extend_existing=True, *columns)
+        v_table = Table(table_name, self.Base.metadata, extend_existing=True, *columns)
         v_table.create(self.engine, checkfirst=True)
         # End the database transaction
         trans.commit()
