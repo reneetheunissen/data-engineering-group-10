@@ -6,7 +6,8 @@
 import json
 
 import pandas as pd
-from flask import Flask
+import train as train
+from flask import Flask, Response
 from resources.db_util import DBUtil
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ app.config["DEBUG"] = True
 db_util = DBUtil()
 
 
-@app.route('/data/train', methods=['POST'])
+@app.route('/data/train', methods=['POST', 'PUT'])
 def _read_training_data():
     # read training data - It is the aircraft engine run-to-failure data.
     train_df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
@@ -23,7 +24,9 @@ def _read_training_data():
                          's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
                          's15', 's16', 's17', 's18', 's19', 's20', 's21']
     train_df = train_df.sort_values(['id','cycle'])
-    db_util.create_tb('train', train_df.columns)
+    db_util.create_tb(table_name='train', column_names=train_df.columns)
+    train_df_json = train_df.to_json(orient='records')
+    db_util.add_data_records(table_name='train', records=train_df_json)
     return json.dumps({'message': 'the training table was created'}, sort_keys=False, indent=4), 200
 
 
@@ -48,4 +51,16 @@ def _read_ground_truth_data():
     return json.dumps({'message': 'the ground truth table was created'}, sort_keys=False, indent=4), 200
 
 
-app.run(host='0.0.0.0', port=7270)
+@app.route('/data/<table_name>', methods=['GET'])
+def read_data(table_name):
+    df = db_util.read_data_records(table_name)
+    # resp = Response(df.to_json(orient='records'), status=200, mimetype='application/json')
+    print(df)
+
+
+# app.run(host='0.0.0.0', port=7270)
+
+
+if __name__ == '__main__':
+    _read_training_data()
+    read_data('train')
