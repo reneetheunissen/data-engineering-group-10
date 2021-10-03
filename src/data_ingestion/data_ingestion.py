@@ -53,8 +53,8 @@ def _read_ground_truth_data():
 @app.route('/data/<table_name>', methods=['GET'])
 def read_data(table_name):
     df = db_util.read_data_records(table_name)
-    # resp = Response(df.to_json(orient='records'), status=200, mimetype='application/json')
-    print(df)
+    resp = Response(df.to_json(orient='records'), status=200, mimetype='application/json')
+    return resp
 
 
 app.run(host='0.0.0.0', port=7270)
