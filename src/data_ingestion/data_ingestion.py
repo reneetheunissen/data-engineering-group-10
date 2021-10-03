@@ -17,7 +17,7 @@ db_util = DBUtil()
 
 
 @app.route('/data/<table_name>', methods=['POST'])
-def read_data(table_name: str):
+def create_table(table_name: str):
     # Select the correct data
     if table_name == 'train':
         df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
