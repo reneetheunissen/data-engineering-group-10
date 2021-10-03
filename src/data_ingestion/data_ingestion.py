@@ -7,6 +7,8 @@ import json
 
 import pandas as pd
 from flask import Flask, Response
+from pandas import DataFrame
+
 from resources.db_util import DBUtil
 
 app = Flask(__name__)
@@ -14,40 +16,79 @@ app.config["DEBUG"] = True
 db_util = DBUtil()
 
 
-@app.route('/data/train', methods=['POST'])
-def _read_training_data():
-    # read training data - It is the aircraft engine run-to-failure data.
-    train_df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
-    train_df.drop(train_df.columns[[26, 27]], axis=1, inplace=True)
-    train_df.columns = ['id', 'cycle', 'setting1', 'setting2', 'setting3', 's1', 's2', 's3',
-                         's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
-                         's15', 's16', 's17', 's18', 's19', 's20', 's21']
-    train_df = train_df.sort_values(['id','cycle'])
-    db_util.create_tb(table_name='train', column_names=train_df.columns)
-    train_df_json = train_df.to_json(orient='records')
-    db_util.add_data_records(table_name='train', records=train_df_json)
-    return json.dumps({'message': 'the training table was created'}, sort_keys=False, indent=4), 200
+@app.route('/data/<table_name>', methods=['POST'])
+def read_data(table_name: str):
+    # Select the correct data
+    if table_name == 'train':
+        df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
+        df = prepare_train_or_test_df(df)
+    elif table_name == 'test':
+        df = pd.read_csv('Dataset/PM_test.txt', sep=" ", header=None)
+        df = prepare_train_or_test_df(df)
+    elif table_name == 'truth':
+        df = pd.read_csv('Dataset/PM_truth.txt', sep=" ", header=None)
+        df.drop(df.columns[[1]], axis=1, inplace=True)
+    else:
+        return
+    # Create the table
+    db_util.create_tb(table_name=table_name, column_names=df.columns)
+    json_df = df.to_json(orient='records')
+    json_df = json.loads(json_df)
+    db_util.add_data_records(table_name=table_name, records=json_df)
+    # Report success
+    return json.dumps({'message': f'the {table_name} table was created at /data/{table_name}'}, sort_keys=False,
+                      indent=4), 200
 
 
-@app.route('/data/test', methods=['POST'])
-def _read_test_data():
-    # read test data - It is the aircraft engine operating data without failure events recorded.
-    test_df = pd.read_csv('Dataset/PM_test.txt', sep=" ", header=None)
-    test_df.drop(test_df.columns[[26, 27]], axis=1, inplace=True)
-    test_df.columns = ['id', 'cycle', 'setting1', 'setting2', 'setting3', 's1', 's2', 's3',
-                         's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
-                         's15', 's16', 's17', 's18', 's19', 's20', 's21']
-    db_util.create_tb('test', test_df.columns)
-    return json.dumps({'message': 'the test table was created'}, sort_keys=False, indent=4), 200
+def prepare_train_or_test_df(df: DataFrame) -> DataFrame:
+    df.drop(df.columns[[26, 27]], axis=1, inplace=True)
+    df.columns = ['id', 'cycle', 'setting1', 'setting2', 'setting3', 's1', 's2', 's3',
+                  's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
+                  's15', 's16', 's17', 's18', 's19', 's20', 's21']
+    return df.sort_values(['id', 'cycle'])
 
 
-@app.route('/data/truth', methods=['POST'])
-def _read_ground_truth_data():
-    # read ground truth data - It contains the information of true remaining cycles for each engine in the testing data.
-    truth_df = pd.read_csv('Dataset/PM_truth.txt', sep=" ", header=None)
-    truth_df.drop(truth_df.columns[[1]], axis=1, inplace=True)
-    db_util.create_tb('truth', truth_df.columns)
-    return json.dumps({'message': 'the ground truth table was created'}, sort_keys=False, indent=4), 200
+# @app.route('/data/train', methods=['POST'])
+# def _read_training_data():
+#     # Read the training data - It is the aircraft engine run-to-failure data.
+#     train_df = pd.read_csv('Dataset/PM_train.txt', sep=" ", header=None)
+#     train_df.drop(train_df.columns[[26, 27]], axis=1, inplace=True)
+#     train_df.columns = ['id', 'cycle', 'setting1', 'setting2', 'setting3', 's1', 's2', 's3',
+#                          's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
+#                          's15', 's16', 's17', 's18', 's19', 's20', 's21']
+#     train_df = train_df.sort_values(['id','cycle'])
+#     db_util.create_tb(table_name='train', column_names=train_df.columns)
+#     train_df_json = train_df.to_json(orient='records')
+#     train_df_json = json.loads(train_df_json)
+#     db_util.add_data_records(table_name='train', records=train_df_json)
+#     return json.dumps({'message': 'the training table was created'}, sort_keys=False, indent=4), 200
+#
+#
+# @app.route('/data/test', methods=['POST'])
+# def _read_test_data():
+#     # read test data - It is the aircraft engine operating data without failure events recorded.
+#     test_df = pd.read_csv('Dataset/PM_test.txt', sep=" ", header=None)
+#     test_df.drop(test_df.columns[[26, 27]], axis=1, inplace=True)
+#     test_df.columns = ['id', 'cycle', 'setting1', 'setting2', 'setting3', 's1', 's2', 's3',
+#                          's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14',
+#                          's15', 's16', 's17', 's18', 's19', 's20', 's21']
+#     db_util.create_tb('test', test_df.columns)
+#     test_df_json = test_df.to_json(orient='records')
+#     test_df_json = json.loads(test_df_json)
+#     db_util.add_data_records(table_name='test', records=test_df_json)
+#     return json.dumps({'message': 'the test table was created'}, sort_keys=False, indent=4), 200
+#
+#
+# @app.route('/data/truth', methods=['POST'])
+# def _read_ground_truth_data():
+#     # read ground truth data - It contains the information of true remaining cycles for each engine in the testing data.
+#     truth_df = pd.read_csv('Dataset/PM_truth.txt', sep=" ", header=None)
+#     truth_df.drop(truth_df.columns[[1]], axis=1, inplace=True)
+#     db_util.create_tb('truth', truth_df.columns)
+#     truth_df_json = truth_df.to_json(orient='records')
+#     truth_df_json = json.loads(truth_df_json)
+#     db_util.add_data_records(table_name='truth', records=truth_df_json)
+#     return json.dumps({'message': 'the ground truth table was created'}, sort_keys=False, indent=4), 200
 
 
 @app.route('/data/<table_name>', methods=['GET'])
@@ -58,8 +99,3 @@ def read_data(table_name):
 
 
 app.run(host='0.0.0.0', port=7270)
-
-
-# if __name__ == '__main__':
-#     _read_training_data()
-#     read_data('train')
