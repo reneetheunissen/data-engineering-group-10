@@ -92,4 +92,4 @@ def train_model():
     return jsonify({'message': f"Saved the trained model to the location : {model_repo}"}), 200
 
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=7273)

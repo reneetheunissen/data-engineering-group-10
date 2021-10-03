@@ -105,3 +105,6 @@ def run_data_preprocessing():
     db_util.create_tb('test_preprocessed', test_df.columns)
     db_util.create_tb('truth_preprocessed', truth_df.columns)
     return json.dumps({'message': 'all data was preprocessed and updated'}, sort_keys=False, indent=4), 200
+
+
+app.run(host='0.0.0.0', port=7271)

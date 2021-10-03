@@ -124,4 +124,4 @@ def run_model_selection():
         return jsonify({'message': 'The model was saved locally.'}), 200
 
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=7272)
