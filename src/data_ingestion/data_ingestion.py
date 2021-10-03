@@ -6,7 +6,6 @@
 import json
 
 import pandas as pd
-import train as train
 from flask import Flask, Response
 from resources.db_util import DBUtil
 
