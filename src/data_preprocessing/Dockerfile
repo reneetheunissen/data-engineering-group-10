@@ -9,11 +9,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all files in data preprocessing local host directory to /usr/src/myapp in Docker container
 COPY . .
 # Expose the port that our app runs in
-EXPOSE 5000
+EXPOSE 7270
 # Environment Variables
 ENV MODEL_REPO=/usr/src/myapp/models
-ENV TRAININGDB_API=http://training-db:5000/data/train
-ENV TESTDB_API=http://test-db:5000/data/test
-ENV TRUTHDB_API=http://truth-db:5000/data/truth
+ENV TRAININGDB_API=http://training-db:7270/data/train
+ENV TESTDB_API=http://test-db:7270/data/test
+ENV TRUTHDB_API=http://truth-db:7270/data/truth
 # Run our App
 CMD ["python3", "data_preprocessing.py"]
