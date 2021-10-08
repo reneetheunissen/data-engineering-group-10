@@ -28,6 +28,7 @@ def create_table(table_name: str):
     elif table_name == 'truth':
         df = pd.read_csv('Dataset/PM_truth.txt', sep=" ", header=None)
         df.drop(df.columns[[1]], axis=1, inplace=True)
+        df.columns=['value']
     else:
         return
     # Create the table
@@ -36,8 +37,7 @@ def create_table(table_name: str):
     json_df = json.loads(json_df)
     db_util.add_data_records(table_name=table_name, records=json_df)
     # Report success
-    return json.dumps({'message': f'the {table_name} table was created at /data/{table_name}'}, sort_keys=False,
-                      indent=4), 200
+    return json.dumps({'message': f'the {table_name} table was created at /data/{table_name}'}, indent=4), 200
 
 
 def prepare_train_or_test_df(df: DataFrame) -> DataFrame:
