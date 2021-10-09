@@ -9,7 +9,7 @@ import os
 import numpy as np
 import pandas as pd
 import requests
-from flask import Flask
+from flask import Flask, Response
 from sklearn import preprocessing
 
 from resources.db_util import DBUtil
@@ -19,7 +19,7 @@ app.config["DEBUG"] = True
 db_util = DBUtil()
 
 
-@app.route('/data/', methods=['POST'])
+@app.route('/preprocessing', methods=['POST'])
 def run_data_preprocessing():
     #######
     # TRAIN
@@ -55,7 +55,10 @@ def run_data_preprocessing():
     join_df = train_df[train_df.columns.difference(cols_normalize)].join(norm_train_df)
     train_df = join_df.reindex(columns=train_df.columns)
 
-    db_util.create_tb('train_preprocessed', train_df.columns)
+    db_util.create_tb('train', train_df.columns)
+    json_df_train = train_df.to_json(orient='records')
+    json_df_train = json.loads(json_df_train)
+    db_util.add_data_records(table_name='train', records=json_df_train)
 
     ######
     # TEST
@@ -102,9 +105,22 @@ def run_data_preprocessing():
     test_df['label1'] = np.where(test_df['RUL'] <= w1, 1, 0 )
     test_df['label2'] = test_df['label1']
     test_df.loc[test_df['RUL'] <= w0, 'label2'] = 2
-    db_util.create_tb('test_preprocessed', test_df.columns)
-    db_util.create_tb('truth_preprocessed', truth_df.columns)
+    db_util.create_tb('test', test_df.columns)
+    json_df_test = test_df.to_json(orient='records')
+    json_df_test = json.loads(json_df_test)
+    db_util.add_data_records(table_name='test', records=json_df_test)
+    db_util.create_tb('truth', truth_df.columns)
+    json_df_truth = truth_df.to_json(orient='records')
+    json_df_truth = json.loads(json_df_truth)
+    db_util.add_data_records(table_name='truth', records=json_df_truth)
     return json.dumps({'message': 'all data was preprocessed and updated'}, sort_keys=False, indent=4), 200
+
+
+@app.route('/preprocessing/<table_name>', methods=['GET'])
+def read_data(table_name):
+    df = db_util.read_data_records(table_name)
+    resp = Response(df.to_json(orient='records'), status=200, mimetype='application/json')
+    return resp
 
 
 app.run(host='0.0.0.0', port=7271)

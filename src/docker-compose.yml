@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  ingestion:
+    build: data_ingestion
+    ports:
+      - "7270:7270"
+  preprocessing:
+    build: data_preprocessing
+    ports:
+      - "7271:7271"
+  selection:
+    build: model_selection
+    ports:
+      - "7272:7272"
+  training:
+    build: model_training
+    ports:
+      - "7273:7273"
+  evaluation:
+    build: model_evaluation
+    ports:
+      - "7274:7274"

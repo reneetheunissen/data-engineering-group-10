@@ -9,9 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all files in model evaluation local host directory to /usr/src/myapp in Docker container
 COPY . .
 # Expose the port that our app runs in
-EXPOSE 5000
+EXPOSE 7274
 # Environment Variables
 ENV MODEL_REPO=/usr/src/myapp/models
-ENV TESTDB_PREPROCESSED=http://test-db:5000/data/test_preprocessed
+ENV TESTDB_PREPROCESSED=http://preprocessing:7271/preprocessing/test
 # Run our App
 CMD ["python3", "model_evaluation.py"]

@@ -27,8 +27,8 @@ def create_table(table_name: str):
         df = prepare_train_or_test_df(df)
     elif table_name == 'truth':
         df = pd.read_csv('Dataset/PM_truth.txt', sep=" ", header=None)
-        df.drop(df.columns[[1]], axis=1, inplace=True)
-        df.columns=['value']
+        df.drop(df.columns[1], axis=1, inplace=True)
+        df.columns = ['value']
     else:
         return
     # Create the table

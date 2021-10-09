@@ -8,5 +8,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 # Copy all files in data ingestion local host directory to /usr/src/myapp in Docker container
 COPY . .
-# Run the application
+# Expose the port that our app runs in
+EXPOSE 7270
+# Environment Variables
+ENV DB_URL=sqlite:///data.db
+# Run our App
 CMD ["python3", "data_ingestion.py"]

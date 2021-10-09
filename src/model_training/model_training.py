@@ -48,8 +48,12 @@ def train_model():
         for start, stop in zip(range(0, num_elements - seq_length), range(seq_length, num_elements)):
             yield data_matrix[start:stop, :]
 
+        # pick the feature columns
+        sensor_cols = ['s' + str(i) for i in range(1, 22)]
+        sequence_cols = ['setting1', 'setting2', 'setting3', 'cycle_norm']
+        sequence_cols.extend(sensor_cols)
     # generator for the sequences
-    seq_gen = (list(gen_sequence(train_df[train_df['id'] == id], sequence_length, sequence_cols))
+    seq_gen = (list(gen_sequence(train_df[train_df['id'] == id], 50, sequence_cols))
                for id in train_df['id'].unique())
 
     # generate sequences and convert to numpy array
