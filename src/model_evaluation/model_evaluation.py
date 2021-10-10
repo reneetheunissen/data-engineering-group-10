@@ -39,15 +39,15 @@ def run_model_evaluation():
     # Similarly, we pick the labels
     y_mask = [len(test_df[test_df['id']==id]) >= 50 for id in test_df['id'].unique()]
     label_array_test_last = test_df.groupby('id')['label1'].nth(-1)[y_mask].values
-    label_array_test_last = label_array_test_last.reshape(label_array_test_last.shape[0], 1).astype(np.float32)
-
+    label_array_test_last = label_array_test_last.reshape(label_array_test_last.shape[0], 1).astype(int)
+    label_array_test_last = [x[0] for x in label_array_test_last]
     # if best iteration's model was saved then load and use it
     model_repo = os.environ['MODEL_REPO']
     model_path = os.path.join(model_repo, "model.h5")
     estimator = load_model(model_path)
 
     # make predictions and compute confusion matrix
-    y_pred_test = estimator.predict_classes(seq_array_test_last)
+    y_pred_test = (estimator.predict(seq_array_test_last) > 0.5).astype("int32")
     y_true_test = label_array_test_last
 
     # compute precision and recall

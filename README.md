@@ -1,5 +1,16 @@
 # Group 10: Assignment 1
 The used ML application is from Umberto Griffo. The readme below is from their project.
+The original project can be found on GitHub: https://github.com/umbertogriffo/Predictive-Maintenance-using-LSTM.
+
+## Updates Software Environment made by Group 10
+* Python 3.9
+* flask 2.0.1
+* pandas 1.3.3
+* sqlalchemy 1.4.25
+* requests 2.26.0
+* scikit-learn 1.0
+* keras 2.6.0
+* tensorflow 2.6.0
 
 # Recurrent Neural Networks for Predictive Maintenance
 * Author: Umberto Griffo

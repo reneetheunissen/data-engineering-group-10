@@ -48,10 +48,11 @@ def train_model():
         for start, stop in zip(range(0, num_elements - seq_length), range(seq_length, num_elements)):
             yield data_matrix[start:stop, :]
 
-        # pick the feature columns
-        sensor_cols = ['s' + str(i) for i in range(1, 22)]
-        sequence_cols = ['setting1', 'setting2', 'setting3', 'cycle_norm']
-        sequence_cols.extend(sensor_cols)
+    # pick the feature columns
+    sensor_cols = ['s' + str(i) for i in range(1, 22)]
+    sequence_cols = ['setting1', 'setting2', 'setting3', 'cycle_norm']
+    sequence_cols.extend(sensor_cols)
+
     # generator for the sequences
     seq_gen = (list(gen_sequence(train_df[train_df['id'] == id], 50, sequence_cols))
                for id in train_df['id'].unique())
@@ -84,7 +85,7 @@ def train_model():
     label_array = np.concatenate(label_gen).astype(np.float32)
 
     # fit the network
-    model.fit(seq_array, label_array, epochs=100, batch_size=200, validation_split=0.05, verbose=2,
+    model.fit(seq_array, label_array, epochs=4, batch_size=200, validation_split=0.05, verbose=2,
               callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=0,
                                                          mode='min'),
                            keras.callbacks.ModelCheckpoint(model_path, monitor='val_loss', save_best_only=True,

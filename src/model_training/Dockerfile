@@ -11,7 +11,7 @@ COPY . .
 # Expose the port that our app runs in
 EXPOSE 7273
 # Environment Variables
-ENV MODEL_REPO=/usr/src/myapp/models
+ENV MODEL_REPO=models
 ENV TRAININGDB_PREPROCESSED=http://preprocessing:7271/preprocessing/train
 # Run our App
 CMD ["python3", "model_training.py"]
