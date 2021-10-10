@@ -54,9 +54,7 @@ def run_model_evaluation():
     precision_test = precision_score(y_true_test, y_pred_test)
     recall_test = recall_score(y_true_test, y_pred_test)
     f1_test = 2 * (precision_test * recall_test) / (precision_test + recall_test)
-    return jsonify({'message': f'Precision: {precision_test} \n'
-                               f'Recall: {recall_test} \n'
-                               f'F1-score: {f1_test}'}), 200
+    return jsonify({'message': f'Precision: {precision_test}, Recall: {recall_test}, F1-score: {f1_test}'}), 200
 
 
 app.run(host='0.0.0.0', port=7274)

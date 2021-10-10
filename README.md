@@ -12,6 +12,20 @@ The original project can be found on GitHub: https://github.com/umbertogriffo/Pr
 * keras 2.6.0
 * tensorflow 2.6.0
 
+## How to run the application
+In order to run the application, open the command prompt. Browse to the src directory and run the following commands:
+* sudo docker-compose build (do not use sudo when working on your local machine)
+* sudo docker-compose up -d (this starts the application)
+
+You can now test the application via Insomnia. The Insomnia request library is also available on GitHub under the name:
+insomnia_request_library.json.
+
+Close the application by running sudo docker-compose down.
+
+### Notes about running the application
+* To create the tables, you need to run /train, /test, and /truth separately.
+* Training takes around 1.5 minutes.
+
 # Recurrent Neural Networks for Predictive Maintenance
 * Author: Umberto Griffo
 * Twitter: @UmbertoGriffo
